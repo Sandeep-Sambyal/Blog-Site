@@ -1,0 +1,48 @@
+{% extends 'home/basic.html' %}
+
+
+{% block style %}
+
+
+{% endblock  %}
+
+
+{% block body%}
+
+<div class="conatiner " style="margin-left:10%;margin-right:10%;"> 
+    {% if allposts|length < 1 %}
+      <p class="mt-5">  Your search query - <b>{{query}}</b> - did not match any documents.</p>
+      <p>Suggestions:</p>
+      <ul class="suggestions">
+            <li>Make sure that all words are spelled correctly.</li>
+            <li>Try different keywords.</li>
+            <li>Try more general keywords.</li>  
+      </ul>  
+    
+    
+    {% else %}
+       {% if query|length == 0 %}
+            <h5 class="results my-2">Fetching all results : </h5>
+       {% else %}
+            <h5 class="results my-2">Fetching results for <b>{{query}}</b> : </h5>
+       {% endif %}
+    
+
+    <div class="headers" >
+        <div class="row">
+            {% for post in allposts %}
+
+            <div class="col-md-4 border border-info" >
+                <h2>{{post.title}}</h2>
+                <p>{{post.desc | truncatechars:300}}</p>
+                <p><a class="btn btn-secondary" href="/blog/blogpost/{{post.slug}}" role="button">View details »</a></p>
+            </div>
+            {% if forloop.counter|divisibleby:3 %}
+        </div><div class="row">
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div> 
+    {% endif %}
+</div> 
+{%endblock%}

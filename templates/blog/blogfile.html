@@ -1,0 +1,165 @@
+{% extends 'home/basic.html' %}
+{% block style %}
+
+{% endblock  %}
+
+{% block body%}
+{% load humanize %}
+{% load extra %}
+
+<main role="main" class="container">
+  <div class="row">
+    <div class="col-md-8 blog-main">
+      <h3 class="pb-4 mb-4 font-italic border-bottom">
+        {{post.title | safe }}
+
+      </h3>
+
+      <div class="blog-post">
+
+        <p class="blog-post-meta">{{post.author}} <a class="mr-2 "href="#">{{post.pub_date}} </a>  
+          <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-eye-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
+                <path fill-rule="evenodd" d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/>
+          </svg> {{post.views}}
+        </p>
+        <hr>
+
+
+        <h3>Description:-</h3>
+        <p>{{post.desc | safe }}</p>
+
+      </div>
+
+      <br>
+      <hr>
+      <div class="fb-comments" data-href="http://127.0.0.1:8000/blog/blogposted{{post.slug}}" data-numposts="5"
+        data-width=""></div>
+
+      <div class="container">
+        <h3>Comments ({{comment.count}}):</h3>
+        {% if user.is_authenticated %}
+
+        <form method="POST" action={% url 'comment' %}>{% csrf_token %}
+          <input type="hidden" name="slug" value={{post.slug}}></input>
+          <input type="hidden" name="postid" value={{post.id}}></input>
+
+          <div class="row mb-3">
+            {% comment %} <div class="col-md-3 bg-success">Image</div> {% endcomment %}
+            <div class="col-md-1 p-0">
+              <img src="/static/blog/user_logo.png" class="w-100"></img>
+            </div>
+            <!-- <div class="col-md-11 pl-2 ">
+              <input type="hidden" name="parentsno" value="">
+              <input type="text" class="form-control" placeholder="Enter Your Comment" name="comment"
+                aria-label="Enter Your Comment" aria-describedby="button-addon2" required=true>
+              <div class="input-group-append">
+                <button class="btn btn-warning" type="submit" id="button-addon2" name="Submit Comment">Comment</button>
+              </div>
+            </div> -->
+
+
+            <div class="input-group col-md-11">
+              <div class="comm col-md-9">
+              <input type="hidden" name="parentsno" value="{{x.sno}}">
+              <input type="hidden" name="slug" value={{post.slug}}>
+              <input type="text" class="form-control w-100" placeholder="Enter Your Comment" name="comment"
+              aria-label="Enter Your Comment" aria-describedby="button-addon2" required=true>
+            <div class="input-group-append">
+              <button class="btn btn-warning" type="submit" id="button-addon2" name="Submit Comment">Comment</button>
+            </div>
+            </div>
+
+
+
+          </div>
+        </form>
+        {% else %}
+        <p class="text-danger"><b> Kindly login to make comments.</b></p>
+        {% endif %}
+      </div>
+      {% for x in comment  %}
+      <div class="row mt-3 border border-dark">
+        <div class="col-md-1 p-0">
+          <img src="/static/blog/user_logo.png" class="w-100"></img>
+
+        </div>
+        <div class="col-md-10 pl-2 ">
+          <b>{{x.user.username}}</b> <span class="badge badge-secondary"> {{x.timestamp | naturaltime }}<br></span>
+          <p class="border pl-2">{{x.comment}} </p>
+        </div>
+
+      </div>
+      {% if user.is_authenticated %}
+
+      <p>
+        <button class="btn btn-danger mt-1" type="button" data-toggle="collapse" data-target="#replybox{{x.sno}}"
+          aria-expanded="false" aria-controls="replybox{{x.sno}}">
+          Reply
+        </button>
+      </p>
+      <div class="collapse" id="replybox{{x.sno}}">
+        <form method="POST" action={% url 'comment' %}>{% csrf_token %}
+          <div class="input-group col-md-9">
+            <input type="hidden" name="parentsno" value="{{x.sno}}"></input>
+            <input type="hidden" name="slug" value={{post.slug}}>
+            <input type="hidden" name="postid" value={{post.id}}>
+            <input type="text" class="form-control" placeholder="Enter Your Comment" name="comment"
+              aria-label="Enter Your Comment" aria-describedby="button-addon2" required=true>
+            <div class="input-group-append">
+              <button class="btn btn-warning" type="submit" id="button-addon2" name="Submit Comment">Comment</button>
+            </div>
+          </div>
+        </form>
+      </div>
+      {% endif %}
+
+        {% for reply in childcomments|get_val:x.sno  %}
+          
+          <div class="row mx-5 border border-danger my-2">
+              <div class="col-md-1 p-0">
+              <img src="/static/blog/user_logo.png" class="w-100"></img>
+              </div>
+              <div class="col-md-11">
+              <b>{{reply.user.username}}</b> <span class="badge badge-secondary"> {{reply.timestamp | naturaltime }}<br></span>
+          <p class="border pl-2">{{reply.comment}} </p>
+              </div>
+          </div>
+      {% endfor %}  
+      {% endfor %} 
+
+
+<br>
+<br>
+
+    </div>
+
+
+
+  </div><!-- /.blog-main -->
+
+  <aside class="col-md-4 blog-sidebar">
+    <div class="p-4 mb-3 bg-light rounded">
+      <h4 class="font-italic">About</h4>
+      <p class="mb-0">All blogs content is obtained from other sources. We dont authenticate the reality of information.
+      </p>
+    </div>
+
+
+
+    <div class="p-4">
+      <h4 class="font-italic">Our Social Media Account</h4>
+      <ol class="list-unstyled">
+        <li><a href="https://github.com/Sandeep-Sambyal">GitHub</a></li>
+        <li><a href="https://www.linkedin.com/in/sandeep-singh-271a6b7b/">Linkedin</a></li>
+        <li><a href="https://www.facebook.com/sandy.ruined">Facebook</a></li>
+      </ol>
+    </div>
+  </aside><!-- /.blog-sidebar -->
+
+  </div><!-- /.row -->
+
+</main>
+
+
+{% endblock  %}

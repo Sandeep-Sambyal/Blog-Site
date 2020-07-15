@@ -1,0 +1,53 @@
+{% extends 'home/basic.html' %}
+
+
+{% block style %}
+{% block activebar %}#homebar{%endblock activebar%}
+
+{% endblock  %}
+
+
+{% block body%}
+<div class="container">
+ 
+
+  <div class="jumbotron p-0 mb-3" style="height:25em">
+    <div class="row" style="height: inherit;">
+      <div class="col-md-8 h-100 bg-danger division">
+          <h3 class="mt-5">Blogging is the New Hobby....</h3><p><br data-mce-bogus="1"></p><h4><strong><em>One place to read all technical blogs, with real-time views and provision to make comments on the post. You can like and share them on Facebook too.&nbsp;</em></strong></h4><p><br data-mce-bogus="1"></p></div>
+      <div class="col-md-4 h-100 pt-5 bg-danger division">
+        <img src="/static/home/download.jpg" alt="Error Loading Image." class="w-100 h-80">
+      
+      </div>
+    </div>
+  </div> 
+
+
+
+
+
+  <marquee class="my-2 h3 text-danger" direction="left" scrollamount="15" ><b>Trending Posts of the Day:</b></marquee>
+  {% comment %} <h3 class="my-2">Trending Posts of the Day:</h3> {% endcomment %}
+  <div class="headers" >
+    <div class="row">
+    {% for post in allposts %}
+
+      <div class="col-md-4 mb-4 border border-info" style="height:20em;">
+        <div class="hlll" style="height:22em; width:inherit">
+            <div class="title bg-light" style="height:3em;" ><b> {{post.title | truncatechars:65 | safe}} </b></div>
+            <div class="desc bg-red" style="height:13em;">{{post.desc | truncatechars:350 | safe }}</div>
+            <div class="btn  mb-1 " style="height:3em; text-align:center"><a class="btn btn-primary" href="/blog/blogpost/{{post.slug}}" role="button">View details »</a></div>
+        
+        </div>
+      </div>
+
+    {% if forloop.counter|divisibleby:3 %}
+      </div><div class="row">
+    {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+  
+</div>   
+
+{%endblock%}
